@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Milwaukee Projects</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:           #f7f6f3;
+      --surface:      #ffffff;
+      --text:         #1d1d1f;
+      --text-muted:   #6e6e73;
+      --green:        #2d5a27;
+      --green-light:  #eef2ee;
+      --border:       #e0ddd8;
+      --radius:       12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 17px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ──────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(247, 246, 243, 0.85);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border);
+      height: 56px;
+      padding: 0 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-phone {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--green);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .nav-phone:hover { opacity: 0.65; }
+
+    /* ── Hero ─────────────────────────────────────────────────── */
+    .hero {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 120px 48px 100px;
+    }
+
+    .eyebrow {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(52px, 7vw, 84px);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.04;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    .hero p {
+      font-size: 19px;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 980px;
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: opacity 0.2s;
+      display: inline-block;
+    }
+    .btn-primary:hover { opacity: 0.82; }
+
+    .btn-outline {
+      color: var(--green);
+      border: 1.5px solid var(--green);
+      padding: 14px 28px;
+      border-radius: 980px;
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: opacity 0.2s;
+      display: inline-block;
+    }
+    .btn-outline:hover { opacity: 0.65; }
+
+    /* ── Divider ──────────────────────────────────────────────── */
+    .rule {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0 48px;
+    }
+
+    /* ── Services ─────────────────────────────────────────────── */
+    .services {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 100px 48px;
+    }
+
+    .section-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 56px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px;
+      transition: box-shadow 0.2s;
+    }
+    .card:hover { box-shadow: 0 4px 28px rgba(0,0,0,0.07); }
+
+    .card-icon {
+      width: 46px;
+      height: 46px;
+      background: var(--green-light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* ── Contact ──────────────────────────────────────────────── */
+    .contact {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 100px 48px;
+    }
+
+    .contact-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 60px;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+    }
+
+    .contact-left h2 {
+      font-size: clamp(28px, 3vw, 42px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 14px;
+    }
+
+    .contact-left > p {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+
+    .contact-phone {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--green);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+      transition: opacity 0.2s;
+    }
+    .contact-phone:hover { opacity: 0.65; }
+
+    /* Form */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.1);
+    }
+
+    textarea { resize: vertical; min-height: 96px; }
+
+    .submit-btn {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 980px;
+      font-size: 15px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: opacity 0.2s;
+    }
+    .submit-btn:hover { opacity: 0.82; }
+    .submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .form-msg {
+      font-size: 14px;
+      text-align: center;
+      padding: 10px 14px;
+      border-radius: 8px;
+      display: none;
+    }
+    .form-msg.ok  { display: block; background: var(--green-light); color: var(--green); }
+    .form-msg.err { display: block; background: #fef2f2; color: #c0392b; }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer p { font-size: 13px; color: var(--text-muted); }
+
+    .version {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: var(--border);
+    }
+
+    /* ── Mobile ───────────────────────────────────────────────── */
+    @media (max-width: 720px) {
+      nav               { padding: 0 24px; }
+      .hero             { padding: 72px 24px 60px; }
+      .rule             { margin: 0 24px; }
+      .services         { padding: 64px 24px; }
+      .contact          { padding: 64px 24px; }
+      .contact-box      { padding: 32px 24px; }
+      .contact-grid     { grid-template-columns: 1fr; gap: 40px; }
+      .row              { grid-template-columns: 1fr; }
+      footer            { padding: 24px; flex-direction: column; gap: 6px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="nav-logo">Milwaukee Projects</a>
+    <a href="tel:+12624246321" class="nav-phone">(262) 424-6321</a>
+  </nav>
+
+  <section class="hero">
+    <p class="eyebrow">Milwaukee Landscaping</p>
+    <h1>Your lawn,<br>taken care of.</h1>
+    <p>Professional lawn care in Milwaukee. Clean cuts, reliable service, every time.</p>
+    <div class="actions">
+      <a href="tel:+12624246321" class="btn-primary">Call (262) 424-6321</a>
+      <a href="#contact" class="btn-outline">Get a Quote</a>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section class="services">
+    <p class="section-label">What we do</p>
+    <h2 class="section-title">Services</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🌿</div>
+        <h3>Lawn Mowing</h3>
+        <p>Consistent, precise cuts on a schedule that works for you. We keep your lawn sharp all season long.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🍂</div>
+        <h3>Leaf Removal</h3>
+        <p>Full cleanup of leaves and debris. We leave your property clean and ready for what comes next.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section class="contact" id="contact">
+    <div class="contact-box">
+      <div class="contact-grid">
+        <div class="contact-left">
+          <h2>Get in touch.</h2>
+          <p>Fill out the form and we'll get back to you within 24–48 hours with a quote.</p>
+          <a href="tel:+12624246321" class="contact-phone">(262) 424-6321</a>
+        </div>
+        <form id="contactForm">
+          <div class="row">
+            <div class="field">
+              <label for="fullName">Full Name</label>
+              <input type="text" id="fullName" name="fullName" placeholder="Jane Smith" required>
+            </div>
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input type="tel" id="phone" name="phone" placeholder="(414) 555-0100" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="jane@example.com" required>
+          </div>
+          <div class="field">
+            <label for="service">Service</label>
+            <select id="service" name="service" required>
+              <option value="" disabled selected>Select a service</option>
+              <option value="Lawn Mowing">Lawn Mowing</option>
+              <option value="Leaf Removal">Leaf Removal</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="message">Message <span style="font-weight:400">(optional)</span></label>
+            <textarea id="message" name="message" placeholder="Any details about your property or schedule..."></textarea>
+          </div>
+          <button type="submit" class="submit-btn" id="submitBtn">Send Message</button>
+          <div class="form-msg" id="formMsg"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Milwaukee Projects</p>
+    <span class="version">V1.0</span>
+  </footer>
+
+  <script>
+    // Update this to your Railway URL once the backend is deployed
+    const API_URL = 'https://milwaukee-projects-backend-production.up.railway.app/api/contact';
+
+    document.getElementById('contactForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const btn = document.getElementById('submitBtn');
+      const msg = document.getElementById('formMsg');
+
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      msg.className = 'form-msg';
+
+      const payload = {
+        fullName: document.getElementById('fullName').value,
+        email:    document.getElementById('email').value,
+        phone:    document.getElementById('phone').value,
+        service:  document.getElementById('service').value,
+        message:  document.getElementById('message').value,
+      };
+
+      try {
+        const res  = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          msg.textContent = "Thanks! We'll be in touch within 24–48 hours.";
+          msg.className = 'form-msg ok';
+          this.reset();
+        } else {
+          msg.textContent = (data.errors && data.errors[0]) || 'Something went wrong. Please try again.';
+          msg.className = 'form-msg err';
+        }
+      } catch {
+        msg.textContent = 'Unable to send. Please call us at (262) 424-6321.';
+        msg.className = 'form-msg err';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send Message';
+      }
+    });
+  </script>
+
+</body>
+</html>
