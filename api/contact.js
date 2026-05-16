@@ -8,44 +8,49 @@ function stripHtml(str) {
   return str.replace(/<[^>]*>/g, '').replace(/&[a-z#0-9]+;/gi, ' ').trim();
 }
 
+function calcPrice(diameter) {
+  return Math.max(100, Math.round(diameter * 3));
+}
+
 function validate(body) {
   const errors = [];
   const fullName = stripHtml(String(body.fullName || ''));
-  const email = String(body.email || '').trim().toLowerCase();
-  const phone = String(body.phone || '').trim();
-  const service = String(body.service || '').trim();
-  const message = stripHtml(String(body.message || ''));
+  const email    = String(body.email || '').trim().toLowerCase();
+  const phone    = String(body.phone || '').trim();
+  const diameter = parseFloat(body.diameter);
+  const notes    = stripHtml(String(body.notes || ''));
 
-  if (!fullName || fullName.length < 2) errors.push('Full name is required.');
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('Valid email is required.');
-  if (!phone || phone.replace(/\D/g, '').length < 10) errors.push('Valid phone number is required.');
-  if (!['Lawn Mowing', 'Leaf Removal'].includes(service)) errors.push('Valid service is required.');
-  if (message.length > 2000) errors.push('Message is too long.');
+  if (!fullName || fullName.length < 2)                       errors.push('Full name is required.');
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))   errors.push('Valid email is required.');
+  if (!phone || phone.replace(/\D/g, '').length < 10)         errors.push('Valid phone number is required.');
+  if (isNaN(diameter) || diameter <= 0 || diameter > 500)     errors.push('Please enter a valid stump diameter (1–500 inches).');
+  if (notes.length > 2000)                                    errors.push('Notes are too long.');
 
   if (errors.length) return { valid: false, errors };
-  return { valid: true, data: { fullName, email, phone, service, message } };
+  return { valid: true, data: { fullName, email, phone, diameter, notes } };
 }
 
-async function generateEmailBody(lead) {
+async function generateEmailBody(lead, price) {
   const firstName = lead.fullName.split(' ')[0];
 
   const prompt = [
-    'You are writing a follow-up email on behalf of Milwaukee Projects, a professional lawn care and landscaping company serving the Milwaukee, Wisconsin area.',
+    'You are writing a follow-up email on behalf of Milwaukee Projects, a professional stump grinding and removal company serving the Milwaukee, Wisconsin area.',
     '',
-    'A customer just submitted a contact form. Their details are:',
+    'A customer just submitted a quote request. Their details are:',
     `- First name: ${firstName}`,
-    `- Service they are interested in: ${lead.service}`,
-    lead.message ? `- Additional notes they left: ${lead.message}` : '- Additional notes: none provided',
+    `- Stump diameter: ${lead.diameter} inches`,
+    `- Estimated price: $${price} (we charge $3 per inch with a $100 minimum)`,
+    lead.notes ? `- Additional notes they left: ${lead.notes}` : '- Additional notes: none provided',
     '',
     'Write a warm, friendly, and professional follow-up email body that:',
     '1. Opens by addressing them by their first name',
     '2. Thanks them genuinely for reaching out to Milwaukee Projects',
-    '3. Acknowledges the specific service they are interested in',
-    '4. Confirms their request has been received and that someone will follow up within 24–48 hours',
+    `3. Acknowledges their stump (reference the ${lead.diameter}-inch diameter) and clearly states the estimated price of $${price}`,
+    '4. Notes that the final quote will be confirmed after a quick on-site look, and that someone will be in touch within 24 hours to schedule',
     '5. Invites them to call or reply if they have immediate questions',
-    '6. Closes with a warm sign-off from "The Milwaukee Projects Team"',
+    '6. Closes warmly from "The Milwaukee Projects Team"',
     '',
-    'Tone: conversational, human, and welcoming — like a real person wrote it, not a corporate auto-reply.',
+    'Tone: conversational, confident, and human — like a real pro who does this every day wrote it, not a corporate auto-reply.',
     'Length: 3–4 short paragraphs.',
     'Return the email body text only — no subject line, no extra commentary.',
   ].join('\n');
@@ -69,31 +74,33 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ success: false, errors: result.errors });
   }
 
-  const lead = result.data;
+  const lead  = result.data;
+  const price = calcPrice(lead.diameter);
   const firstName = lead.fullName.split(' ')[0];
 
   try {
-    const emailBody = await generateEmailBody(lead);
+    const emailBody = await generateEmailBody(lead, price);
 
     await resend.emails.send({
-      from: 'Milwaukee Projects <hello@milwaukeeprojects.com>',
-      to: lead.email,
-      subject: `Thanks for contacting Milwaukee Projects, ${firstName}!`,
-      text: emailBody,
+      from:    'Milwaukee Projects <hello@milwaukeeprojects.com>',
+      to:      lead.email,
+      subject: `Your stump removal quote — Milwaukee Projects`,
+      text:    emailBody,
     });
 
     await resend.emails.send({
-      from: 'Milwaukee Projects <hello@milwaukeeprojects.com>',
-      to: process.env.OWNER_EMAIL,
-      subject: `New lead: ${lead.fullName} — ${lead.service}`,
+      from:    'Milwaukee Projects <hello@milwaukeeprojects.com>',
+      to:      process.env.OWNER_EMAIL,
+      subject: `New quote: ${lead.fullName} — ${lead.diameter}" stump (~$${price})`,
       text: [
-        'New contact form submission:',
+        'New stump removal quote request:',
         '',
-        `Name:    ${lead.fullName}`,
-        `Email:   ${lead.email}`,
-        `Phone:   ${lead.phone}`,
-        `Service: ${lead.service}`,
-        `Message: ${lead.message || 'None'}`,
+        `Name:       ${lead.fullName}`,
+        `Email:      ${lead.email}`,
+        `Phone:      ${lead.phone}`,
+        `Diameter:   ${lead.diameter} inches`,
+        `Est. Price: $${price}`,
+        `Notes:      ${lead.notes || 'None'}`,
       ].join('\n'),
     });
 
